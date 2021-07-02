@@ -154,6 +154,7 @@ context.js
 - context.js에서 Context를 만들고 이것을 공용으로 사용
   - export const UserContext = React.createContext();
   - Header(사용할 곳)에서 import { UserContext } from './context';
+  - context.js에서 useContext를 사용하고 그것을 export한뒤(useUser) 사용할 곳에서 useContext대신 useUser를 사용해도 됨(9.3강 improve part)
 - context.js에서 high order component인 Context.Provider를 만들어서 전체 app을 감쌈
 
 ```javascript
@@ -176,3 +177,14 @@ export default UserContextProvider;
 ```
 
 - 모든 children은 value에 대한 접근 권한이 생김
+
+## 9.3 Recap and Improvements
+
+React.createContext()를 export한 것을
+useContext를 사용하여 받아오면 global state를 사용 할 수 있음
+(app.js에서 contextProvider로 감싸줘야 함)
+
+Screen.js과 Header.js에서 각각 const { logUserIn } = useContext(UserContext);를 불러서 사용하고 있는데 이를 개선
+
+- context.js에서 const UserContext = React.createContext();를 export하는 대신 사용자가 실행할때마다 자동으로 수행하는 함수를 만들어 줌(useUser)
+- 추가로 확장성을 위해 useFns로 loggedIn()을 옮겨줌
