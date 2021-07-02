@@ -41,7 +41,7 @@ Context vs Redux
   - high order component의 state를 props를 전달 전달해서 사용
 
 <details>
-<summary>code</summary>
+<summary>context를 사용 전 code</summary>
 
 ```javascript
 // App.js : state
@@ -80,10 +80,99 @@ const Header = ({ user }) => (
 - context 사용 후
 
 <details>
-<summary>code</summary>
+<summary>context 사용 후 code</summary>
 
 ```javascript
+// App.js : state
+import React from 'react';
+import Screen from './Screen';
+import UserContextProvider from './context';
+
+function App() {
+  return (
+    <UserContextProvider>
+      <Screen />
+    </UserContextProvider>
+  );
+}
+export default App;
+
+// Screen.js : 단순히 전달만 함
+import React from 'react';
+import Header from './Header';
+
+const Screen = () => {
+  return (
+    <div>
+      <Header />
+      <h1>First screen</h1>
+    </div>
+  );
+};
+export default Screen;
+
+// Header.js : props으로 받아서 사용
+import React, { useContext } from 'react';
+import { UserContext } from './context';
+
+const Header = () => {
+  const { name } = useContext(UserContext);
+  return (
+    <header>
+      <a href="#">Home</a>
+      <span> Hello, {name}!</span>
+    </header>
+  );
+};
+
+export default Header;
+
+// context.js
+import React from 'react';
+
+export const UserContext = React.createContext();
+
+const UserContextProvider = ({ children }) => (
+  <UserContext.Provider
+    value={{
+      name: 'Tony',
+    }}
+  >
+    {children}
+  </UserContext.Provider>
+);
+
+export default UserContextProvider;
 
 ```
 
 </details>
+
+context.js
+
+- context.js 파일을 만듦(high order component)
+- context.js에서 Context를 만들고 이것을 공용으로 사용
+  - export const UserContext = React.createContext();
+  - Header(사용할 곳)에서 import { UserContext } from './context';
+- context.js에서 high order component인 Context.Provider를 만들어서 전체 app을 감쌈
+
+```javascript
+// App.js
+import React from 'react';
+
+const UserContext = React.createContext();
+
+const UserContextProvider = ({ children }) => {
+  <UserContext.Provider
+    value={{
+      name: 'Tony',
+    }}
+  >
+    {children}
+  </UserContext.Provider>;
+};
+
+export default UserContextProvider;
+```
+
+- 모든 children은 value에 대한 접근 권한이 생김
